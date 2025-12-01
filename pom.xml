@@ -41,6 +41,12 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+            <version>0.35.0</version> <!-- 请检查最新版本 -->
+        </dependency>
+
 	</dependencies>
 
 	<build>
