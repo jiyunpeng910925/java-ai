@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: java-api
+
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: https://api.deepseek.com  # 如果用DeepSeek，这里必填
+      api-key: sk-7ec0e853c63241d29ac4b374afacf6b8          # 填入你的 Key
+      model-name: deepseek-chat         # 或者是 deepseek-chat
+      temperature: 0.0                    # SQL生成需要严谨，温度设为0
+      log-requests: true                  # 开发时开启日志，方便调试
+      log-responses: true
