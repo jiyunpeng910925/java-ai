@@ -2,6 +2,23 @@ spring:
   application:
     name: java-api
 
+
+  # 1. 配置数据库连接 (固定 URL，方便登录)
+  datasource:
+    url: jdbc:h2:mem:talk2data       # <--- 记住这个名字，一会儿登录要用
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:                        # 默认为空，不填
+
+  # 2. 开启 H2 Console
+  h2:
+    console:
+      enabled: true                  # <--- 关键！开启控制台
+      path: /h2-console              # 访问路径
+      settings:
+        web-allow-others: true       # 允许远程访问 (可选，本地开发建议开启)
+
+
 langchain4j:
   open-ai:
     chat-model:

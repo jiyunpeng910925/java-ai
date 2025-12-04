@@ -4,6 +4,7 @@ package com.jyp.java.api.service;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.V;
 import dev.langchain4j.service.spring.AiService;
 
 @AiService
@@ -16,18 +17,7 @@ public interface SqlGeneratorService {
                 数据库使用的是 H2 Database (类似 MySQL 语法)。
             
                 目前的表结构如下：
-                1. Table: users
-                   - id (INT)
-                   - username (VARCHAR)
-                   - email (VARCHAR)
-                   - signup_date (DATE)
-            
-                2. Table: orders
-                   - id (INT)
-                   - user_id (INT) - 外键关联 users.id
-                   - product_name (VARCHAR)
-                   - amount (DECIMAL)
-                   - order_date (DATE)
+                {{currentSchema}}
             
                 规则：
                 1. 仅输出 SQL 语句，不要包含 markdown 格式（如 ```sql ... ```），也不要包含任何解释性文字。
@@ -35,5 +25,6 @@ public interface SqlGeneratorService {
                 3. 如果收到报错信息，请先分析错误原因，然后再输出修正后的 SQL。
                 4. 如果用户的问题无法用当前表结构回答，请返回字符串 "N/A"。
             """)
-    String generateSql(@MemoryId String memoryId, @UserMessage String userQuestion);
+    // 技术点：@V("key") 是 LangChain4j 的模版引擎功能，它会把参数值自动替换到 @SystemMessage 里的 {{key}} 位置
+    String generateSql(@MemoryId String memoryId, @UserMessage String userQuestion, @V("currentSchema") String currentSchema);
 }

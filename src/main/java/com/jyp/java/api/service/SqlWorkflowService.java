@@ -14,16 +14,22 @@ public class SqlWorkflowService {
     //    private static final Logger log = LoggerFactory.getLogger(SqlWorkflowService.class);
     private final SqlGeneratorService aiService;
     private final JdbcTemplate jdbcTemplate;
+    private final DatabaseSchemaExtractor schemaExtractor;
 
-    public SqlWorkflowService(SqlGeneratorService aiService, JdbcTemplate jdbcTemplate) {
+    public SqlWorkflowService(SqlGeneratorService aiService, JdbcTemplate jdbcTemplate, DatabaseSchemaExtractor schemaExtractor) {
         this.aiService = aiService;
         this.jdbcTemplate = jdbcTemplate;
+        this.schemaExtractor = schemaExtractor;
     }
 
     public List<Map<String, Object>> executeQueryWithRetry(String userQuestion) {
         // 1. 生成一个唯一的会话 ID，代表"这一次查询任务"
         // 这样可以确保多次重试是在同一个上下文中，AI 能记住之前的报错
         String executionId = UUID.randomUUID().toString();
+
+        // 每次请求都获取，意味着如果你中间新建了表，AI 马上就能知道
+        String dynamicSchema = schemaExtractor.getConciseSchema();
+        System.out.println("--- Detected Schema ---\n" + dynamicSchema + "-----------------------");
 
         String currentInput = userQuestion;
         int maxRetries = 3; // 最多重试3次
@@ -32,7 +38,7 @@ public class SqlWorkflowService {
             System.out.println("----- 第 " + (i + 1) + " 次尝试 -----");
 
             // 2. 调用 AI 生成 SQL (传入 memory，AI 会自动读取历史并追加新回答)
-            String sql = aiService.generateSql(executionId, currentInput);
+            String sql = aiService.generateSql(executionId, currentInput, dynamicSchema);
             System.out.println("AI 生成 SQL: " + sql);
 
             // 清理一下可能的 markdown 符号（以防万一）
